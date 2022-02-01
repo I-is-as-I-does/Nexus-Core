@@ -1,0 +1,27 @@
+{
+  "name": "@i-is-as-i-does/nexus-core",
+  "version": "2.0.0",
+  "description": "Toolkit for Nexus related apps.",
+  "directories": {
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/I-is-as-I-does/Nexus-Core.git"
+  },
+  "keywords": [
+    "nexus", "utils", "toolkit", "translate", "validate", "log", "load", "store"
+  ],
+  "author": "i-is-as-i-does",
+  "license": "AGPLv3",
+  "bugs": {
+    "url": "https://github.com/I-is-as-I-does/Nexus-Core/issues"
+  },
+  "homepage": "https://github.com/I-is-as-I-does/Nexus-Core#readme",
+  "dependencies": {
+    "@i-is-as-i-does/jack-js": "^1.0.2",
+    "@i-is-as-i-does/valva": "^1.2.0"  
+  }
+}
