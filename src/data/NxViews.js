@@ -22,18 +22,17 @@ export function selectedThreadsViews (nxdata, url, ids) {
   var viewstore = {
     views: { threads: [] },
     list: [],
-    failed: [],
+    failed: ids,
     confirmed: []
   }
   nxdata.threads.forEach((thread) => {
-    var idx = ids.indexOf(thread.id)
+    var idx = ids.indexOf(thread.id) 
     if (idx !== -1) {
       var view = threadView(thread, url)
       viewstore.views.threads.push(view)
       viewstore.list.push(view.src)
       viewstore.confirmed.push(thread.id)
-    } else {
-      viewstore.failed.push(thread.id)
+      viewstore.failed.splice(idx,1)
     }
   })
   return viewstore
