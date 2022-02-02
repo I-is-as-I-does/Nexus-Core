@@ -255,7 +255,7 @@ export function getValidSrcUrl (url, id) {
 
 export function validLinks (linked) {
   var vlinked = []
-  if (hasValidType(linked, 'linked')) {
+  if (hasValidType(linked, 'linked', false)) {
     var len = linked.length
     var limit = itmLimits('linked')[1]
     if (len > limit) {
