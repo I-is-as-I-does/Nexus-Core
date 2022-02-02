@@ -1,9 +1,5 @@
 /*! Nexus | (c) 2021-22 I-is-as-I-does | AGPLv3 license */
-
-import {
-  conciseUrl,
-  oembedLink, oembedResponse
-} from '@i-is-as-i-does/jack-js/src/modules/Web'
+import { conciseUrl, oembedLink, oembedResponse } from '@i-is-as-i-does/jack-js/src/modules/Web'
 import { waitForElmInDOM } from '@i-is-as-i-does/jack-js/src/modules/Help'
 import { logErr } from '../logs/NxLog'
 
@@ -19,18 +15,18 @@ export function dispatchMediaReady (resolvedElm, parentElm) {
 }
 
 export function placeMedia (url, parentElm, mediaElm) {
-  var loadEvent = 'load'
-  if (['VIDEO', 'AUDIO'].includes(mediaElm.tagName)) {
-    loadEvent = 'loadedmetadata'
-  }
-  mediaElm.addEventListener(loadEvent, function () {
-    dispatchMediaReady(mediaElm, parentElm)
-  })
   if (mediaElm.tagName !== 'A') {
+    var loadEvent = 'load'
     var srcElm = mediaElm
-    if (mediaElm.tagName === 'VIDEO ') {
-      srcElm = mediaElm.firstChild
+    if (['VIDEO', 'AUDIO'].includes(mediaElm.tagName)) {
+      loadEvent = 'loadedmetadata'
+      if (mediaElm.tagName === 'VIDEO ') {
+        srcElm = mediaElm.firstChild
+      }
     }
+    mediaElm.addEventListener(loadEvent, function () {
+      dispatchMediaReady(mediaElm, parentElm)
+    })
     srcElm.addEventListener('error', function () {
       logErr('Unable to load requested media', url)
       var fallback = pageElm(url)
@@ -39,7 +35,10 @@ export function placeMedia (url, parentElm, mediaElm) {
     })
     srcElm.src = url
   } else {
-    mediaElm.textContent = conciseUrl(url, true)
+    if(!mediaElm.textContent){
+      mediaElm.textContent = conciseUrl(url, true)
+    }
+    dispatchMediaReady(mediaElm, parentElm)
     mediaElm.href = url
   }
   parentElm.append(mediaElm)
@@ -156,6 +155,10 @@ export function resolveMedia (url, type, parentElm) {
 }
 
 export function preResolveViewMedia (view) {
+  if(view.data.content.media.type === 'page'){
+    view.resolved.media = true
+    return Promise.resolve(view)
+  }
   var host = document.createElement('DIV')
   host.style.display = 'none'
   document.body.append(host)
@@ -167,6 +170,7 @@ export function preResolveViewMedia (view) {
     }
     host.remove()
     view.resolved.media = true
+    return view
   }
   var promise = new Promise(function (resolve) {
     host.addEventListener('mediaReady', resolve)
