@@ -39,6 +39,7 @@ export function placeMedia (url, parentElm, mediaElm) {
     })
     srcElm.src = url
   } else {
+    mediaElm.textContent = conciseUrl(url, true)
     mediaElm.href = url
   }
   parentElm.append(mediaElm)
@@ -53,8 +54,10 @@ export function setMediaUrl (srcElm, attrb = 'src', url = null) {
 export function pageElm (url = null) {
   var mediaElm = document.createElement('A')
   mediaElm.target = '_blank'
-  mediaElm.textContent = conciseUrl(url, true)
-  setMediaUrl(mediaElm, 'href', url)
+  if(url){
+    mediaElm.textContent = conciseUrl(url, true)
+    mediaElm.setAttribute('href', url)
+  }
   return mediaElm
 }
 
@@ -152,7 +155,7 @@ export function resolveMedia (url, type, parentElm) {
   }
 }
 
-export function resolveViewMedia (view) {
+export function preResolveViewMedia (view) {
   var host = document.createElement('DIV')
   host.style.display = 'none'
   document.body.append(host)
