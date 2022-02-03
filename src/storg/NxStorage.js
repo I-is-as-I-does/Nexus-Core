@@ -25,13 +25,14 @@ function resolveStore (storage) {
 setStorageAvailability(locStorag)
 setStorageAvailability(sesStorag)
 
-export function storeItem (key, data, storage = 'session', instanceStore = null, json = true) {
+export function storeItem (key, data, storage = 'session', instanceStore = null) {
+  var sdata = JSON.stringify(data)
   if (instanceStore) {
-    instanceStore[key] = data
+    instanceStore[key] = sdata
   }
   var store = resolveStore(storage)
   if (store != null) {
-    var datasize = jsonSize(data, true)
+    var datasize = jsonSize(sdata, true, true)
     if (datasize > 2000) {
       return
     }
@@ -41,30 +42,23 @@ export function storeItem (key, data, storage = 'session', instanceStore = null,
       avail = 5000 - clearPartialStorage(store, 2000)
     }
     avail -= datasize
-
-    if (json) {
-      data = JSON.stringify(data)
-    }
-    store.setItem(key, data)
+    store.setItem(key, sdata)
     store.setItem('available', Math.ceil(avail))
   }
 }
 
-export function getStoredItem (key, storage = 'session', instanceStore = null, json = true) {
+export function getStoredItem (key, storage = 'session', instanceStore = null) {
   if (instanceStore !== null && Object.prototype.hasOwnProperty.call(instanceStore, key)) {
-    return instanceStore[key]
+    return JSON.parse(instanceStore[key])
   }
   var store = resolveStore(storage)
   if (store) {
-    var data = store.getItem(key)
-    if (data) {
-      if (json) {
-        data = JSON.parse(data)
-      }
+    var sdata = store.getItem(key)
+    if (sdata) {
       if (instanceStore) {
-        instanceStore[key] = data
+        instanceStore[key] = sdata
       }
-      return data
+      return JSON.parse(sdata)
     }
   }
   return null

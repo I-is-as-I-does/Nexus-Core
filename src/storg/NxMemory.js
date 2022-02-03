@@ -10,7 +10,7 @@ var oembedStore = {}
 const editpsrcix = 'nx-edit#'
 
 function threadLastSeenDate (src) {
-  return getStoredItem(src, 'local', visitStore, false)
+  return getStoredItem(src, 'local', visitStore)
 }
 
 export function registerEditData (url, nxdata) {
@@ -23,7 +23,7 @@ export function getStoredEditData (url) {
 
 export function registerThreadVisit (src, timestamp) {
   if (!Object.prototype.hasOwnProperty.call(visitStore, src)) {
-    storeItem(src, timestamp, 'local', visitStore, false)
+    storeItem(src, timestamp, 'local', visitStore)
   }
 }
 
@@ -60,16 +60,16 @@ export function getStoredData (url) {
 }
 
 export function registerOembedResponse (givenUrl, response) {
-  storeItem(givenUrl, response, 'local', oembedStore, true)
+  storeItem(givenUrl, response, 'local', oembedStore)
 }
 
 export function getStoredOembedResponse (givenUrl) {
-  return getStoredItem(givenUrl, 'local', oembedStore, true)
+  return getStoredItem(givenUrl, 'local', oembedStore)
 }
 
 export function setStoredLang (lang) {
-  storeItem('nx-lang', lang, 'local', null, false)
+  storeItem('nx-lang', lang, 'local')
 }
 export function getStoredLang () {
-  return getStoredItem('nx-lang', 'local', null, false)
+  return getStoredItem('nx-lang', 'local')
 }
