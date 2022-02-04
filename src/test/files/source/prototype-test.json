@@ -41,8 +41,26 @@
             ]
         },
         {
+            "id": "bad-links-Test",
+            "title": "Bad Links Test",
+            "description": "bad link test is bad link test",
+            "content": {
+                "timestamp": "2021-12-12T00:12",
+                "main": "Much bad link",
+                "aside": "",
+                "media": {
+                    "url": "",
+                    "type": "",
+                    "caption": ""
+                }
+            },
+            "linked": [
+                "http://localhost:0000/nexus/source/prototype-test.json#lots-of-linked-test"
+            ]
+        },
+        {
             "id": "lots-of-linked-test",
-            "title": "Lots of Linked Threads Test",
+            "title": "Lots of Linked Threads Test and",
             "description": "lots of linked threads test is lots of linked threads test",
             "content": {
                 "timestamp": "2021-12-12T00:12",

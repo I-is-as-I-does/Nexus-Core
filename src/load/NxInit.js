@@ -61,14 +61,13 @@ export function resolveData (request) {
   return Promise.reject(new Error(0))
 }
 
-
 export function initAll (options = {}) {
   var seed = {}
   seed.options = Object.assign({}, defaultInitOptions, options)
   setCookie()
   initLogger(seed.options.forceLog)
   seed.nxelm = retrieveNxElm(seed.options.customSelector)
-  seed.request = getRequest(nxelm)
+  seed.request = getRequest( seed.nxelm)
     return resolveTheme(seed.request, seed.options.cssSignatureRule).then(() => {
       return resolveData(seed.request)
     }).then(nxdata => {
