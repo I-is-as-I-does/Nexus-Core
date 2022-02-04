@@ -10,12 +10,8 @@ import { defaultElmId } from './../base/NxDefaults.js'
 export const defaultInitOptions = {
   customSelector: null,
   forceLog: false,
-  loadTranslator: false,
-  forceLang: null,
   forceStyle: null,
-  customSignatureRule: null,
-  forceId: null,
-  extendedData: true
+  customSignatureRule: null
 }
 
 export function setCookie () {
@@ -46,24 +42,6 @@ export function retrieveNxElm (customSelector = null) {
   return elm
 }
 
-export function processRequest (nxelm, loadTranslator = false, forceLang = null) {
-  var request = getRequest(nxelm)
-
-  if (loadTranslator) {
-    var lang = request.lang
-    if (forceLang) {
-      lang = forceLang
-    }
-    return import('../transl/NxCoreTranslate.js')
-      .then((NxCoreTranslate) => {
-        NxCoreTranslate.setOriginLang(lang)
-        return request
-      })
-  }
-
-  return Promise.resolve(request)
-}
-
 export function resolveTheme (request, forceStyle = null, signatureRule = null) {
   var url = request.style
   var fallbackUrl = null
@@ -83,27 +61,6 @@ export function resolveData (request) {
   return Promise.reject(new Error(0))
 }
 
-export function processFirstView (request, viewstore, forceId = null) {
-  if (request.id) {
-    var ids = [forceId, request.id]
-    for (var i = 0; i < 2; i++) {
-      var index = viewstore.list.indexOf(request.url + '#' + ids[i])
-      if (index !== -1) {
-        return viewstore.views.threads[index]
-      }
-    }
-  }
-  return viewstore.views.author
-}
-
-export function extendInitData (seed) {
-  return import('../data/NxViews.js').then((NxViews) => {
-    seed.viewstore = NxViews.authorAndThreadsViews(seed.nxdata, seed.request.url)
-    seed.firstview = processFirstView(seed.request, seed.viewstore, seed.options.forceId)
-    NxViews.addViewToHistory(seed.firstview.src, true)
-    return seed
-  })
-}
 
 export function initAll (options = {}) {
   var seed = {}
@@ -111,18 +68,11 @@ export function initAll (options = {}) {
   setCookie()
   initLogger(seed.options.forceLog)
   seed.nxelm = retrieveNxElm(seed.options.customSelector)
-  return processRequest(seed.nxelm, seed.options.loadTranslator, seed.options.forceLang).then(request => {
-    seed.request = request
-
+  seed.request = getRequest(nxelm)
     return resolveTheme(seed.request, seed.options.cssSignatureRule).then(() => {
       return resolveData(seed.request)
     }).then(nxdata => {
       seed.nxdata = nxdata
-
-      if (seed.options.extendedData) {
-        return extendInitData(seed)
-      }
-
       return seed
     }).catch(err => {
       var msg = err.message
@@ -132,5 +82,4 @@ export function initAll (options = {}) {
       }
       throw new Error(msg)
     })
-  })
 }

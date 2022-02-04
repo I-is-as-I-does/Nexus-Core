@@ -98,3 +98,23 @@ export function listenToHistoryChange (callback) {
     }
   }
 }
+
+export function processFirstView (request, viewstore, forceId = null) {
+  if (request.id) {
+    var ids = [forceId, request.id]
+    for (var i = 0; i < 2; i++) {
+      var index = viewstore.list.indexOf(request.url + '#' + ids[i])
+      if (index !== -1) {
+        return viewstore.views.threads[index]
+      }
+    }
+  }
+  return viewstore.views.author
+}
+
+export function extendInitData (seed, forceId = null) {
+    seed.viewstore = authorAndThreadsViews(seed.nxdata, seed.request.url)
+    seed.firstview = processFirstView(seed.request, seed.viewstore, forceId)
+    addViewToHistory(seed.firstview.src, true)
+    return seed
+}

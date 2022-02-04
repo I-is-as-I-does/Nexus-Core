@@ -30,6 +30,7 @@ function updateStorage (lang) {
 }
 
 export function setOriginLang (lang) {
+  // @doc lang should be seed.request.lang from NxInit, or custom one
   if (!storedLang) {
     setUserSelectedLang(lang)
   }
