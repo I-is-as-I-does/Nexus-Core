@@ -5,7 +5,7 @@ This is a toolkit repository for Nexus related apps.
 
 ## Overview
 
-You'll find modules to:
+In `src`, you'll find modules to:
 
 - process request
 - handle views, media, nested threads
@@ -14,6 +14,11 @@ You'll find modules to:
 - use local and session storage
 - translate landmarks and labels
 - validate data
+
+In `files`, you'll find:
+
+- test media and json files
+- favicons
 
 ## Install
 
