@@ -34,4 +34,4 @@ For apps, documentation, demo, starter kits, ... cf. [github.com/I-is-as-I-does/
 
 ## License
 
-This repository is under the **GNU AGPLv3 License**. 
+This project is under the **GNU AGPLv3 License**. 
