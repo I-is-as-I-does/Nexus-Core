@@ -4,12 +4,18 @@ import { splitUrlAndId, isValidId } from '../validt/NxStamper.js'
 import { defaultLang, defaultStyle } from './NxDefaults.js'
 import { getAbsoluteUrl, splitCurrentUrl } from './NxHost.js'
 
-export function getRequest (NxElm) {
+export function getRequest (NxElm, appDefaultCss = null, appDefaultLang = null) {
+  if(!appDefaultCss){
+    appDefaultCss = defaultStyle
+  }
+  if(!appDefaultLang){
+    appDefaultLang = defaultLang
+  }
   var request = {
     url: null,
     id: '',
-    style: defaultStyle,
-    lang: defaultLang
+    style: appDefaultCss,
+    lang: appDefaultLang
   }
 
   if (NxElm && NxElm.dataset) {

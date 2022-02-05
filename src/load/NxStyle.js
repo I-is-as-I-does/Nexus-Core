@@ -15,7 +15,7 @@ export function loadAppCss (url = null, signatureRule = null, fallbackUrl = null
   }
   return loadCss(signatureRule, url)
     .then(() => {
-      return Promise.resolve()
+      return Promise.resolve(url)
     }).catch((err) => {
       logErr('Theme not found', err.message)
       if (fallbackUrl) {

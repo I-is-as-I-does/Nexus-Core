@@ -11,7 +11,9 @@ export const defaultInitOptions = {
   customSelector: null,
   forceLog: false,
   forceStyle: null,
-  customSignatureRule: null
+  customSignatureRule: null,
+  appDefaultCss: null, 
+  appDefaultLang: null
 }
 
 export function setCookie () {
@@ -42,14 +44,17 @@ export function retrieveNxElm (customSelector = null) {
   return elm
 }
 
-export function resolveTheme (request, forceStyle = null, signatureRule = null) {
+export function resolveTheme (request, fallbackCssUrl = null, forceStyle = null, customSignatureRule = null) {
   var url = request.style
-  var fallbackUrl = null
   if (forceStyle) {
     url = forceStyle
-    fallbackUrl = request.style
+    if(!fallbackCssUrl || fallbackCssUrl === forceStyle){
+      fallbackCssUrl = request.style
+    } 
+  } else if(fallbackCssUrl === url){
+    fallbackCssUrl = null
   }
-  return loadAppCss(url, signatureRule, fallbackUrl)
+  return loadAppCss(url, customSignatureRule, fallbackCssUrl)
 }
 
 export function resolveData (request) {
@@ -67,8 +72,10 @@ export function initAll (options = {}) {
   setCookie()
   initLogger(seed.options.forceLog)
   seed.nxelm = retrieveNxElm(seed.options.customSelector)
-  seed.request = getRequest( seed.nxelm)
-    return resolveTheme(seed.request, seed.options.cssSignatureRule).then(() => {
+  seed.request = getRequest(seed.nxelm, seed.options.appDefaultCss, seed.options.appDefaultLang)
+    return resolveTheme(seed.request, seed.options.appDefaultCss, seed.options.forceStyle, seed.options.customSignatureRule)
+    .then((styleUrl) => {
+      seed.styleUrl = styleUrl
       return resolveData(seed.request)
     }).then(nxdata => {
       seed.nxdata = nxdata

@@ -35,46 +35,34 @@ export function getLinkedInstances (view, exclude = []) {
   return store
 }
 
-export function resolveInstanceViews (url, ids) {
-  var result = { register: false, views: [], confirmed: null}
- return getSrcData(url).then(nxdata => {
-    var viewstore = authorAndselectedThreadsViews(nxdata, url, ids)
-    if (viewstore.failed.length) {
-      result.register = true
-      logErr('Linked threads could not be resolved', viewstore.failed.join(', '))
-    }
-    result.views = viewstore.views
-    result.confirmed = viewstore.confirmed
-    return result
-  }).catch(() => {
-    result.register = true
-    logErr('Linked source could not be resolved', url)
-    return result
-  })
-}
-
-
 export function resolveLinkedViews (view, exclude = []) {
   var store = getLinkedInstances(view, exclude)
   var register = store.register
   var confirmedInstances = {}
   const promises = []
   for(let [url, ids] of Object.entries(store.instances)){
-    promises.push(resolveInstanceViews(url, ids).then(result => {
-      if(result.confirmed !== null){
-        confirmedInstances[url] = result.confirmed
+    var promise = getSrcData(url).then(nxdata => {
+      var viewstore = authorAndselectedThreadsViews(nxdata, url, ids)
+      if (!register && viewstore.failed.length) {
+        register = true
+        logErr('Linked threads could not be resolved', viewstore.failed.join(', '))
       }
-      if(!register && result.register){
+      view.nested.push({views : viewstore.views, list: viewstore.list})
+      confirmedInstances[url] = viewstore.confirmed
+    }).catch(() => {
+      if (!register){
         register = true
       }
-      view.nested.push({views : result.views})
-    }))
+      logErr('Linked source could not be resolved', url)
+    })
+    promises.push(promise)
   }
 
-  return Promise.all(promises).then(() => {
-    view.resolved.nested = true
+  return Promise.all(promises).then(() => { 
     if (register) {
       registerLinkedMaps(view.src, confirmedInstances)
     }
+    view.resolved.nested = true
+    return view
   })
 }
