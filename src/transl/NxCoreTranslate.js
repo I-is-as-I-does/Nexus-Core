@@ -5,6 +5,7 @@ import { NxTranslations } from './NxTranslations.js'
 
 var txts = NxTranslations
 var availableLangs = Object.keys(txts)
+availableLangs.push('en')
 
 var storedLang = getStoredLang()
 if (storedLang != null && !langIsAvailable(storedLang)) {
