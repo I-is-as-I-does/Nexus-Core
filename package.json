@@ -1,7 +1,7 @@
 {
   "name": "@i-is-as-i-does/nexus-core",
   "private": false,
-  "version": "2.2.0",
+  "version": "2.2.2",
   "description": "Toolkit for Nexus related apps.",
   "main": "./index.js",
   "directories": {

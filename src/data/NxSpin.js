@@ -4,7 +4,7 @@ export class Spinner {
     this.spinContainer = spinContainer
     if(!spinStates.length){
         spinStates = ["", "/", "–", "\\", "|"]
-    } else if(spinStates.length[0] !== ''){
+    } else if(spinStates[0] !== ''){
         spinStates.unshift('')
     }
     this.spinStates = spinStates
@@ -24,7 +24,7 @@ export class Spinner {
             clearInterval(f)
           } else {
             this.spinContainer.textContent = this.spinStates[this.spinPosition]
-            if (this.spinPosition === this.spinStates.length) {
+            if (this.spinPosition === (this.spinStates.length - 1)) {
               this.spinPosition = 1
             } else {
               this.spinPosition++
