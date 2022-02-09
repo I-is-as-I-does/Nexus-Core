@@ -6,18 +6,19 @@ import { getSrcData } from '../load/NxSrc.js'
 import { logErr } from '../logs/NxLog.js'
 import { authorAndselectedThreadsViews } from './NxViews.js'
 
-export function buildLinkedInstances (view, exclude = []) {
+export function buildLinkedInstances (thread, exclude = []) {
   // @doc instances = {url:[...ids] }
   var instances = {}
 
-  for(var i=0; i < view.data.linked.length; i++){
-    if (!exclude.includes(view.data.linked[i])) {
-      var split = splitUrlAndId(view.data.linked[i])
-      if (!exclude.includes(split.url)) { 
-        if(Object.prototype.hasOwnProperty.call(instances, split.url)){
+  for(var i=0; i < thread.linked.length; i++){
+    if (!exclude.includes(thread.linked[i])) {
+      var split = splitUrlAndId(thread.linked[i])
+      if (!exclude.includes(split.url)) {
+        if(!Object.prototype.hasOwnProperty.call(instances, split.url)){
+          instances[split.url] = []
+        } 
+        if(split.id){
           instances[split.url].push(split.id)
-        } else {
-          instances[split.url] = [split.id]
         }
       }
     }
@@ -26,17 +27,18 @@ export function buildLinkedInstances (view, exclude = []) {
 }
 
 
-export function getLinkedInstances (view, exclude = []) {
-  var store = { instances: getStoredLinkedMaps(view.src), register: false }
+export function getLinkedInstances (src, thread, exclude = []) {
+  var store = { instances: getStoredLinkedMaps(src), register: false }
   if (store.instances === null) {
-    store.instances = buildLinkedInstances(view, exclude)
+    store.instances = buildLinkedInstances(thread, exclude)
     store.register = true
   }
   return store
 }
 
+
 export function resolveLinkedViews (view, exclude = []) {
-  var store = getLinkedInstances(view, exclude)
+  var store = getLinkedInstances(view.src, view.data, exclude)
   var register = store.register
   var confirmedInstances = {}
   const promises = []
