@@ -13,6 +13,7 @@ export const defaultInitOptions = {
   forceStyle: null,
   customSignatureRule: null,
   appDefaultCss: null, 
+  appDefaultCssAliases: [],
   appDefaultLang: null
 }
 
@@ -72,7 +73,7 @@ export function initAll (options = {}) {
   setCookie()
   initLogger(seed.options.forceLog)
   seed.nxelm = retrieveNxElm(seed.options.customSelector)
-  seed.request = getRequest(seed.nxelm, seed.options.appDefaultCss, seed.options.appDefaultLang)
+  seed.request = getRequest(seed.nxelm, seed.options.appDefaultCss, seed.options.appDefaultCssAliases, seed.options.appDefaultLang)
     return resolveTheme(seed.request, seed.options.appDefaultCss, seed.options.forceStyle, seed.options.customSignatureRule)
     .then((styleUrl) => {
       seed.styleUrl = styleUrl

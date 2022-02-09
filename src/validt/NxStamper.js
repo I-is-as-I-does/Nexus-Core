@@ -1,6 +1,7 @@
 /*! Nexus | (c) 2021-22 I-is-as-I-does | AGPLv3 license */
 import {
   isEmpty,
+  isNonEmptyObj,
   seemsLikeValidDate
 } from '@i-is-as-i-does/jack-js/src/modules/Check'
 import {
@@ -21,6 +22,7 @@ import {
 } from './NxSpecs.js'
 import { logErr } from '../logs/NxLog.js'
 import { getAbsoluteUrl } from '../base/NxHost.js'
+import { initLogger } from '../load/NxInit.js'
 
 export function charLimits (catg) {
   if (Object.prototype.hasOwnProperty.call(charMinMax, catg)) {
@@ -242,9 +244,14 @@ export function isValidLinkItm (link) {
   return false
 }
 
+
+export function isValidLegacyLinkItm(item){
+  return isNonEmptyObj(item) && isValidUrl(item.url) && (!item.id || item.id === '/' || isValidId(item.id))
+}
+
 export function getValidSrcUrl (url, id) {
   url = getAbsoluteUrl(url)
-  if (isValidLinkItm(url)) {
+  if (isValidUrl(url)) {
     if (id && isValidId(id)) {
       url += '#' + id
     }
@@ -263,21 +270,30 @@ export function validLinks (linked) {
       len = limit
     }
     for (var i = 0; i < len; i++) {
+      var url = null
       if (isValidLinkItm(linked[i])) {
         var split = splitUrlAndId(linked[i])
-        var url = split.url
+        url = split.url
         if (split.id) {
           url += '#' + split.id
         }
+      } else if(isValidLegacyLinkItm(linked[i])){
+        url = linked[i].url
+        if (linked[i].id && linked[i].id !== '/') {
+          url += '#' + linked[i].id
+        }
+      }
 
+        if(url){
         if (!vlinked.includes(url)) {
           vlinked.push(url)
-          continue
+        } else {
+          logErr('Duplicate linked thread', url)
         }
-        logErr('Duplicate linked thread', linked[i])
+      }
+        
       }
     }
-  }
   return vlinked
 }
 

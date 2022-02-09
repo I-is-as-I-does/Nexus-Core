@@ -37,9 +37,12 @@ export function loadSrc (url) {
     })
 }
 
-export function prcFileSrc (readerEvent) {
+export function prcFileSrc (readerEvent, skipValidt = false) {
   var nxdata = JSON.parse(readerEvent.target.result)
   if (nxdata) {
+    if(skipValidt){
+      return nxdata
+    }
     nxdata = validData(nxdata)
     if (nxdata) {
       return nxdata
@@ -48,13 +51,13 @@ export function prcFileSrc (readerEvent) {
   return false
 }
 
-export function loadSrcFile (inputEvt) {
+export function loadSrcFile (inputEvt, skipValidt = false) {
   if (inputEvt.target.files.length) {
     if (inputEvt.target.files[0].type === 'application/json') {
       return new Promise((resolve, reject) => {
         var reader = new FileReader()
         reader.onload = function (event) {
-          var nxdata = prcFileSrc(event)
+          var nxdata = prcFileSrc(event, skipValidt)
           if (nxdata) {
             resolve(nxdata)
           } else {

@@ -4,7 +4,7 @@ import { splitUrlAndId, isValidId } from '../validt/NxStamper.js'
 import { defaultLang, defaultStyle } from './NxDefaults.js'
 import { getAbsoluteUrl, splitCurrentUrl } from './NxHost.js'
 
-export function getRequest (NxElm, appDefaultCss = null, appDefaultLang = null) {
+export function getRequest (NxElm, appDefaultCss = null, appDefaultCssAliases = [], appDefaultLang = null) {
   if(!appDefaultCss){
     appDefaultCss = defaultStyle
   }
@@ -30,7 +30,7 @@ export function getRequest (NxElm, appDefaultCss = null, appDefaultLang = null) 
     if (NxElm.dataset.id && isValidId(NxElm.dataset.id)) {
       request.id = NxElm.dataset.id // @doc: id specified in data-id trumps id contained in src url
     }
-    if (NxElm.dataset.style) {
+    if (NxElm.dataset.style && NxElm.dataset.style !== request.style && !appDefaultCssAliases.includes(NxElm.dataset.style)) {
       var cssUrl = getAbsoluteUrl(NxElm.dataset.style)
       if (isValidHttpUrl(cssUrl)) {
         request.style = cssUrl

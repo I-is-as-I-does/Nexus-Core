@@ -1,5 +1,5 @@
 /*! Nexus | (c) 2021-22 I-is-as-I-does | AGPLv3 license */
-import { charMinMax, idPattern, supportedMediaTypes, timestampPattern, urlPattern } from './NxSpecs.js'
+import { appUrl, charMinMax, idPattern, supportedMediaTypes, timestampPattern, urlPattern } from './NxSpecs.js'
 
 export const NxSchema = {
   $schema: 'http://json-schema.org/draft-07/schema',
@@ -7,7 +7,7 @@ export const NxSchema = {
   properties: {
     nexus: {
       type: 'string',
-      pattern: urlPattern
+      const: appUrl
     },
     author: {
       type: 'object',
