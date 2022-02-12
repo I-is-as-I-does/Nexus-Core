@@ -10,14 +10,14 @@ import {
   walkLocalStore,
 } from './NxStorage.js'
 
-const editpsrcix = 'nx-edit#'
+export const editPrefix = 'nx-edit#'
 
 export function registerEditData(url, nxdata) {
-  storeItem(editpsrcix + url, nxdata, 'local')
+  storeItem(editPrefix + url, nxdata, 'local')
 }
 
 export function getStoredEditData(url) {
-  return getStoredItem(editpsrcix + url, 'local')
+  return getStoredItem(editPrefix + url, 'local')
 }
 
 export function registerThreadVisit(src, timestamp) {
@@ -80,7 +80,7 @@ export function clearAllCache() {
 
 export function eraseReaderSaves() {
   walkLocalStore(function(locStore, key){
-    if (key.indexOf(editpsrcix) === 0) {
+    if (key.indexOf(editPrefix) === 0) {
       locStore.removeItem(key)
     }
   })
@@ -90,7 +90,7 @@ export function clearReaderCache() {
   clearInstanceStores()
   clearBrowserStores('local')
   walkLocalStore(function(locStore, key){
-    if (key.indexOf(editpsrcix) !== 0) {
+    if (key.indexOf(editPrefix) !== 0) {
       locStore.removeItem(key)
     }
   })
