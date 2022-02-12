@@ -3,18 +3,14 @@
 import {
   clearBrowserStores,
   clearInstanceStores,
-  getBrowserStore,
   getStoredItem,
   instStoreHasKey,
   removeItem,
   storeItem,
+  walkLocalStore,
 } from './NxStorage.js'
 
 const editpsrcix = 'nx-edit#'
-
-function threadLastSeenDate(src) {
-  return getStoredItem(src, 'local', 'visit')
-}
 
 export function registerEditData(url, nxdata) {
   storeItem(editpsrcix + url, nxdata, 'local')
@@ -31,7 +27,7 @@ export function registerThreadVisit(src, timestamp) {
 }
 
 export function isThreadContentUnseen(src, timestamp) {
-  var lastKnownDate = threadLastSeenDate(src)
+  var lastKnownDate = getStoredItem(src, 'local', 'visit')
 
   if (!lastKnownDate) {
     return true
@@ -82,16 +78,20 @@ export function clearAllCache() {
   clearBrowserStores()
 }
 
+export function eraseReaderSaves() {
+  walkLocalStore(function(locStore, key){
+    if (key.indexOf(editpsrcix) === 0) {
+      locStore.removeItem(key)
+    }
+  })
+}
+
 export function clearReaderCache() {
   clearInstanceStores()
   clearBrowserStores('local')
-  var locStore = getBrowserStore('local')
-  if (locStore && locStore.length) {
-    for (var i = 0; i < locStore.length; i++) {
-      var key = locStore.key(i)
-      if (key.indexOf(editpsrcix) === -1) {
-        locStore.removeItem(key)
-      }
+  walkLocalStore(function(locStore, key){
+    if (key.indexOf(editpsrcix) !== 0) {
+      locStore.removeItem(key)
     }
-  }
+  })
 }

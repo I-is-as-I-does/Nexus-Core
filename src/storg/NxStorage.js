@@ -113,3 +113,14 @@ export function clearBrowserStores(excludeStore = null) {
     }
   })
 }
+
+
+export function walkLocalStore(callback){
+  var locStore = getBrowserStore('local')
+  if (locStore && locStore.length) {
+    for (var i = 0; i < locStore.length; i++) {
+      var key = locStore.key(i)
+      callback(locStore, key)
+    }
+  }
+}

@@ -6,7 +6,7 @@ import { getRequest } from '../base/NxRequest.js'
 import { getQuery } from '../base/NxHost.js'
 import { getSrcData } from './NxSrc.js'
 import { defaultElmId } from './../base/NxDefaults.js'
-import { clearAllCache, clearReaderCache } from '../storg/NxMemory.js'
+import { eraseReaderSaves, clearReaderCache } from '../storg/NxMemory.js'
 
 export const defaultInitOptions = {
   customSelector: null,
@@ -18,12 +18,12 @@ export const defaultInitOptions = {
   appDefaultLang: null
 }
 
-export function checkClearRequest(){
+export function checkCacheRequests(){
   if(getQuery('clear')){
     clearReaderCache()
   }
-  else if(getQuery('clearAll')){
-    clearAllCache()
+ if(getQuery('erase')){
+  eraseReaderSaves()
   }
 }
 
@@ -81,7 +81,7 @@ export function resolveData (request) {
 export function initAll (options = {}) {
   var seed = {}
   seed.options = Object.assign({}, defaultInitOptions, options)
-  checkClearRequest()
+  checkCacheRequests()
   setCookie()
   initLogger(seed.options.forceLog)
   seed.nxelm = retrieveNxElm(seed.options.customSelector)
