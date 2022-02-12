@@ -3,35 +3,59 @@ import {
   clearPartialStorage,
   getLocalStorage,
   getSessionStorage,
-  jsonSize
+  jsonSize,
 } from '@i-is-as-i-does/jack-js/src/modules/Stock'
 
-const locStorag = getLocalStorage()
-const sesStorag = getSessionStorage()
+var instStores = {
+  visit: {},
+  data: {},
+  linked: {},
+  oembed: {},
+}
 
-function setStorageAvailability (store) {
+var brwsrStores = {
+  local: getLocalStorage(),
+  session: getSessionStorage(),
+}
+
+Object.values(brwsrStores).forEach((store) => {
   if (store && !store.getItem('available')) {
     store.setItem('available', 5000)
   }
-}
+})
 
-function resolveStore (storage) {
-  if (storage === 'session') {
-    return sesStorag
+export function getBrowserStore(storage) {
+  if (storage === 'local') {
+    return brwsrStores.local
   }
-  return locStorag
+  return brwsrStores.session
 }
 
-setStorageAvailability(locStorag)
-setStorageAvailability(sesStorag)
+export function getInstStore(instanceStore){
+  if(instStoreExists(instanceStore)){
+    return instStores[instanceStore]
+  }
+  return null
+}
 
-export function storeItem (key, data, storage = 'session', instanceStore = null) {
+export function instStoreExists(instanceStore) {
+  return instanceStore && Object.prototype.hasOwnProperty.call(instStores, instanceStore)
+}
+
+export function instStoreHasKey(instanceStore, key) {
+  return (
+    instStoreExists(instanceStore) &&
+    Object.prototype.hasOwnProperty.call(instStores[instanceStore], key)
+  )
+}
+
+export function storeItem(key, data, storage = 'session', instanceStore = null) {
   var sdata = JSON.stringify(data)
-  if (instanceStore) {
-    instanceStore[key] = sdata
+  if (instStoreExists(instanceStore)) {
+    instStores[instanceStore][key] = sdata
   }
-  var store = resolveStore(storage)
-  if (store != null) {
+  var store = getBrowserStore(storage)
+  if (store) {
     var datasize = jsonSize(sdata, true, true)
     if (datasize > 2000) {
       return
@@ -47,16 +71,16 @@ export function storeItem (key, data, storage = 'session', instanceStore = null)
   }
 }
 
-export function getStoredItem (key, storage = 'session', instanceStore = null) {
-  if (instanceStore !== null && Object.prototype.hasOwnProperty.call(instanceStore, key)) {
-    return JSON.parse(instanceStore[key])
+export function getStoredItem(key, storage = 'session', instanceStore = null) {
+  if (instStoreHasKey(instanceStore, key)) {
+    return JSON.parse(instStores[instanceStore][key])
   }
-  var store = resolveStore(storage)
+  var store = getBrowserStore(storage)
   if (store) {
     var sdata = store.getItem(key)
     if (sdata) {
-      if (instanceStore) {
-        instanceStore[key] = sdata
+      if (instStoreExists(instanceStore)) {
+        instStores[instanceStore][key] = sdata
       }
       return JSON.parse(sdata)
     }
@@ -64,19 +88,28 @@ export function getStoredItem (key, storage = 'session', instanceStore = null) {
   return null
 }
 
-export function removeItem (key, storage = 'session', instanceStore = null) {
-  if (instanceStore & Object.prototype.hasOwnProperty.call(instanceStore, key)) {
-    delete instanceStore[key]
+export function removeItem(key, storage = 'session', instanceStore = null) {
+  if (instStoreHasKey(instanceStore, key)) {
+    delete instStores[instanceStore][key]
   }
-  var store = resolveStore(storage)
+  var store = getBrowserStore(storage)
   if (store) {
     store.removeItem(key)
   }
 }
-export function clearCache () {
-  [sesStorag, locStorag].forEach(store => {
-    if (store) {
-      store.clear()
+
+export function clearInstanceStores(excludeStores = []) {
+  Object.keys(instStores).forEach((instanceStore) => {
+    if (!excludeStores.includes(instanceStore)) {
+      instStores[instanceStore] = {}
+    }
+  })
+}
+
+export function clearBrowserStores(excludeStore = null) {
+  Object.keys(brwsrStores).forEach((name) => {
+    if (brwsrStores[name] && excludeStore !== name) {
+      brwsrStores[name].clear()
     }
   })
 }

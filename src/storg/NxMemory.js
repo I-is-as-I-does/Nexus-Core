@@ -1,33 +1,36 @@
 /*! Nexus | (c) 2021-22 I-is-as-I-does | AGPLv3 license */
 
-import { getStoredItem, removeItem, storeItem } from './NxStorage.js'
+import {
+  clearBrowserStores,
+  clearInstanceStores,
+  getBrowserStore,
+  getStoredItem,
+  instStoreHasKey,
+  removeItem,
+  storeItem,
+} from './NxStorage.js'
 
-var visitStore = {}
-var dataStore = {}
-var linkedStore = {}
-
-var oembedStore = {}
 const editpsrcix = 'nx-edit#'
 
-function threadLastSeenDate (src) {
-  return getStoredItem(src, 'local', visitStore)
+function threadLastSeenDate(src) {
+  return getStoredItem(src, 'local', 'visit')
 }
 
-export function registerEditData (url, nxdata) {
+export function registerEditData(url, nxdata) {
   storeItem(editpsrcix + url, nxdata, 'local')
 }
 
-export function getStoredEditData (url) {
+export function getStoredEditData(url) {
   return getStoredItem(editpsrcix + url, 'local')
 }
 
-export function registerThreadVisit (src, timestamp) {
-  if (!Object.prototype.hasOwnProperty.call(visitStore, src)) {
-    storeItem(src, timestamp, 'local', visitStore)
+export function registerThreadVisit(src, timestamp) {
+  if (!instStoreHasKey('visit', src)) {
+    storeItem(src, timestamp, 'local', 'visit')
   }
 }
 
-export function isThreadContentUnseen (src, timestamp) {
+export function isThreadContentUnseen(src, timestamp) {
   var lastKnownDate = threadLastSeenDate(src)
 
   if (!lastKnownDate) {
@@ -39,37 +42,56 @@ export function isThreadContentUnseen (src, timestamp) {
   return false
 }
 
-export function clearData (url) {
-  removeItem(url, 'session', dataStore)
+export function clearData(url) {
+  removeItem(url, 'session', 'data')
 }
 
-export function registerData (url, nxdata) {
-  storeItem(url, nxdata, 'session', dataStore)
+export function registerData(url, nxdata) {
+  storeItem(url, nxdata, 'session', 'data')
 }
 
-export function registerLinkedMaps (src, map) {
-  storeItem(src + ':linked', map, 'session', linkedStore)
+export function registerLinkedMaps(src, map) {
+  storeItem(src + ':linked', map, 'session', 'linked')
 }
 
-export function getStoredLinkedMaps (src) {
-  return getStoredItem(src + ':linked', 'session', linkedStore)
+export function getStoredLinkedMaps(src) {
+  return getStoredItem(src + ':linked', 'session', 'linked')
 }
 
-export function getStoredData (url) {
-  return getStoredItem(url, 'session', dataStore)
+export function getStoredData(url) {
+  return getStoredItem(url, 'session', 'data')
 }
 
-export function registerOembedResponse (givenUrl, response) {
-  storeItem(givenUrl, response, 'local', oembedStore)
+export function registerOembedResponse(givenUrl, response) {
+  storeItem(givenUrl, response, 'local', 'oembed')
 }
 
-export function getStoredOembedResponse (givenUrl) {
-  return getStoredItem(givenUrl, 'local', oembedStore)
+export function getStoredOembedResponse(givenUrl) {
+  return getStoredItem(givenUrl, 'local', 'oembed')
 }
 
-export function setStoredLang (lang) {
+export function setStoredLang(lang) {
   storeItem('nx-lang', lang, 'local')
 }
-export function getStoredLang () {
+export function getStoredLang() {
   return getStoredItem('nx-lang', 'local')
+}
+
+export function clearAllCache() {
+  clearInstanceStores()
+  clearBrowserStores()
+}
+
+export function clearReaderCache() {
+  clearInstanceStores()
+  clearBrowserStores('local')
+  var locStore = getBrowserStore('local')
+  if (locStore && locStore.length) {
+    for (var i = 0; i < locStore.length; i++) {
+      var key = locStore.key(i)
+      if (key.indexOf(editpsrcix) === -1) {
+        locStore.removeItem(key)
+      }
+    }
+  }
 }
