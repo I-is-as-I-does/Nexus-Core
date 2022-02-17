@@ -24,6 +24,17 @@ export const typesMap = {
   'linked.item': 'String'
 }
 export const required = ['nexus', 'author', 'threads', 'handle', 'url', 'id', 'title', 'content', 'timestamp', 'main', 'type']
+
+export const fallbacks = {
+  handle:"---",
+  url:"http://...",
+  id:"---",
+  title:"---",
+  timestamp: "0000-00-00",
+  main: "...",
+  type: "page"
+}
+
 export const charMinMax = {
   handle: [3, 30],
   about: [0, 400],

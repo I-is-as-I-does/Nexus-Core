@@ -1,10 +1,10 @@
 /*! Nexus | (c) 2021-22 I-is-as-I-does | AGPLv3 license */
-import { conciseUrl, oembedLink, oembedResponse } from '@i-is-as-i-does/jack-js/src/modules/Web'
-import { waitForElmInDOM } from '@i-is-as-i-does/jack-js/src/modules/Help'
-import { logErr } from '../logs/NxLog'
+import { conciseUrl, oembedLink, oembedResponse } from '@i-is-as-i-does/jack-js/src/modules/Web.js'
+import { waitForElmInDOM } from '@i-is-as-i-does/jack-js/src/modules/Help.js'
+import { logErr } from '../logs/NxLog.js'
 
-import { registerOembedResponse, getStoredOembedResponse } from '../storg/NxMemory'
-import { supportedOembedMedia } from '../validt/NxSpecs'
+import { registerOembedResponse, getStoredOembedResponse } from '../storg/NxMemory.js'
+import { supportedOembedMedia } from '../validt/NxSpecs.js'
 
 const mediaReadyEvent = new Event('mediaReady')
 

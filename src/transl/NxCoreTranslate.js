@@ -1,5 +1,5 @@
 /*! Nexus | (c) 2021-22 I-is-as-I-does | AGPLv3 license */
-import { isNonEmptyObj, isNonEmptyStr } from '@i-is-as-i-does/jack-js/src/modules/Check'
+import { isNonEmptyObj, isNonEmptyStr } from '@i-is-as-i-does/jack-js/src/modules/Check.js'
 import { getStoredLang, setStoredLang } from '../storg/NxMemory.js'
 import { NxTranslations } from './NxTranslations.js'
 

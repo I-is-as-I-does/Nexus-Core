@@ -1,8 +1,47 @@
 /*! Nexus | (c) 2021-22 I-is-as-I-does | AGPLv3 license */
-import { isValidHttpUrl } from '@i-is-as-i-does/jack-js/src/modules/Web'
+import { isValidHttpUrl } from '@i-is-as-i-does/jack-js/src/modules/Web.js'
 import { splitUrlAndId, isValidId } from '../validt/NxStamper.js'
 import { defaultLang, defaultStyle } from './NxDefaults.js'
-import { getAbsoluteUrl, splitCurrentUrl } from './NxHost.js'
+import { getAbsoluteUrl, getQuery, currentUrl } from './NxHost.js'
+
+export const splitCurrentUrl = splitUrlAndId(currentUrl)
+export const appModes = ['reader', 'editor']
+
+function solveUrlAndId(request, dataset){
+  if(dataset){
+    if (dataset.src) {
+      var split = splitUrlAndId(getAbsoluteUrl(dataset.src))
+  
+      if (split.url) {
+        request.url = split.url
+        request.id = split.id
+      }
+    }
+    if (dataset.id && isValidId(dataset.id)) {
+      request.id = dataset.id // @doc: id specified in data-id trumps id contained in src url; legacy support
+    }
+  }
+
+  if (splitCurrentUrl.id) {
+    request.id = splitCurrentUrl.id // @doc: id specified in url trumps all
+  }
+}
+
+function solveStyle(request, dataset, appDefaultCssAliases){
+    if (dataset && dataset.style && dataset.style !== request.style && !appDefaultCssAliases.includes(dataset.style)) {
+      var cssUrl = getAbsoluteUrl(dataset.style)
+      if (isValidHttpUrl(cssUrl)) {
+        request.style = cssUrl
+      }
+    }
+}
+
+function solveMode(request, dataset){
+  if((dataset && dataset.mode && dataset.mode === 'editor') || getQuery('edit') || getQuery('new')){
+    request.mode = 'editor'
+  }
+}
+
 
 export function getRequest (NxElm, appDefaultCss = null, appDefaultCssAliases = [], appDefaultLang = null) {
   if(!appDefaultCss){
@@ -12,36 +51,26 @@ export function getRequest (NxElm, appDefaultCss = null, appDefaultCssAliases = 
     appDefaultLang = defaultLang
   }
   var request = {
-    url: null,
+    srcdoc: null,
+    url: '',
     id: '',
     style: appDefaultCss,
-    lang: appDefaultLang
+    lang: appDefaultLang,
+    mode: 'reader'
   }
-
+  var dataset = null
   if (NxElm && NxElm.dataset) {
-    if (NxElm.dataset.src) {
-      var split = splitUrlAndId(getAbsoluteUrl(NxElm.dataset.src))
+    dataset = NxElm.dataset
+    if (dataset.lang) {
+      request.lang = dataset.lang
+    }
+    if(dataset.srcdoc){
+      request.srcdoc = dataset.srcdoc
+    } 
+    solveStyle(request, dataset, appDefaultCssAliases)
+  }
+  solveUrlAndId(request, dataset)
+  solveMode(request, dataset)
 
-      if (split.url) {
-        request.url = split.url
-        request.id = split.id
-      }
-    }
-    if (NxElm.dataset.id && isValidId(NxElm.dataset.id)) {
-      request.id = NxElm.dataset.id // @doc: id specified in data-id trumps id contained in src url
-    }
-    if (NxElm.dataset.style && NxElm.dataset.style !== request.style && !appDefaultCssAliases.includes(NxElm.dataset.style)) {
-      var cssUrl = getAbsoluteUrl(NxElm.dataset.style)
-      if (isValidHttpUrl(cssUrl)) {
-        request.style = cssUrl
-      }
-    }
-    if (NxElm.dataset.lang) {
-      request.lang = NxElm.dataset.lang
-    }
-  }
-  if (splitCurrentUrl.id) {
-    request.id = splitCurrentUrl.id // @doc: id specified in url trumps all
-  }
   return request
 }

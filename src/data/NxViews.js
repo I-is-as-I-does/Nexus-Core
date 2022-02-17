@@ -1,6 +1,7 @@
 /*! Nexus | (c) 2021-22 I-is-as-I-does | AGPLv3 license */
-import { splitCurrentUrl } from '../base/NxHost'
-import { splitUrlAndId } from '../validt/NxStamper'
+import { isValidHttpUrl } from '@i-is-as-i-does/jack-js/src/modules/Web.js'
+import { splitCurrentUrl } from '../base/NxRequest.js'
+import { splitUrlAndId } from '../validt/NxStamper.js'
 
 export function threadView (thread, url) {
   return {
@@ -68,26 +69,27 @@ export function authorAndselectedThreadsViews (nxdata, url, ids) {
 }
 
 export function getView (viewstore, src) {
-  if (src === viewstore.views.author.src) {
-    return viewstore.views.author
-  }
-  var index = viewstore.list.indexOf(src)
-  if (index !== -1) {
+  if (src !== viewstore.views.author.src) {
+    var index = viewstore.list.indexOf(src)
+    if (index !== -1) {
     return viewstore.views.threads[index]
+    }
   }
-  return null
+  return viewstore.views.author
 }
 
 export function addViewToHistory (src, replace = false) {
   var url = splitCurrentUrl.url
-  var id = splitUrlAndId(src).id
-  if (id) {
-    url += '#' + id
-  }
-  if (replace) {
-    window.history.replaceState({ nexus: src }, document.title, url)
-  } else {
-    window.history.pushState({ nexus: src }, document.title, url)
+  if(isValidHttpUrl(url)){
+    var id = splitUrlAndId(src).id
+    if (id) {
+      url += '#' + id
+    }
+    if (replace) {
+      window.history.replaceState({ nexus: src }, document.title, url)
+    } else {
+      window.history.pushState({ nexus: src }, document.title, url)
+    }
   }
 }
 

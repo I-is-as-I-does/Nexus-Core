@@ -1,5 +1,5 @@
 /*! Nexus | (c) 2021-22 I-is-as-I-does | AGPLv3 license */
-import { loadCss, pageHasSheet } from '@i-is-as-i-does/jack-js/src/modules/Web'
+import { loadCss, pageHasSheet } from '@i-is-as-i-does/jack-js/src/modules/Web.js'
 import { logErr } from '../logs/NxLog.js'
 import { defaultSignatureRule, defaultStyle } from '../base/NxDefaults.js'
 

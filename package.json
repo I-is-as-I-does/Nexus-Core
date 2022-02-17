@@ -1,12 +1,14 @@
 {
   "name": "@i-is-as-i-does/nexus-core",
   "private": false,
-  "version": "2.2.8",
+  "type":"module",
+  "version": "2.2.9",
   "description": "Toolkit for Nexus related apps.",
   "main": "./index.js",
   "directories": {
   },
   "scripts": {
+    "build": "rollup -c",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

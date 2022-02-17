@@ -27,8 +27,11 @@ export function buildLinkedInstances (thread, exclude = []) {
 }
 
 
-export function getLinkedInstances (src, thread, exclude = []) {
-  var store = { instances: getStoredLinkedMaps(src), register: false }
+export function getLinkedInstances (src, thread, exclude = [], noCache = false) {
+  var store = { instances: null, register: false }
+  if(!noCache){
+    store.instances = getStoredLinkedMaps(src)
+  }
   if (store.instances === null) {
     store.instances = buildLinkedInstances(thread, exclude)
     store.register = true
@@ -37,8 +40,8 @@ export function getLinkedInstances (src, thread, exclude = []) {
 }
 
 
-export function resolveLinkedViews (view, exclude = []) {
-  var store = getLinkedInstances(view.src, view.data, exclude)
+export function resolveLinkedViews (view, exclude = [], noCache = false) {
+  var store = getLinkedInstances(view.src, view.data, exclude, noCache)
   var register = store.register
   var confirmedInstances = {}
   const promises = []
@@ -61,7 +64,7 @@ export function resolveLinkedViews (view, exclude = []) {
   }
 
   return Promise.all(promises).then(() => { 
-    if (register) {
+    if (!noCache && register) {
       registerLinkedMaps(view.src, confirmedInstances)
     }
     view.resolved.nested = true

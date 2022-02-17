@@ -4,7 +4,7 @@ import {
   getLocalStorage,
   getSessionStorage,
   jsonSize,
-} from '@i-is-as-i-does/jack-js/src/modules/Stock'
+} from '@i-is-as-i-does/jack-js/src/modules/Stock.js'
 
 var instStores = {
   visit: {},

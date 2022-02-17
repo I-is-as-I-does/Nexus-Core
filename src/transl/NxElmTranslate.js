@@ -1,6 +1,6 @@
 /*! Nexus | (c) 2021-22 I-is-as-I-does | AGPLv3 license */
 import { getTxt, setUserSelectedLang } from './NxCoreTranslate.js'
-import { vSplitFlap } from '@i-is-as-i-does/valva/src/modules/transitions'
+import { vSplitFlap } from '@i-is-as-i-does/valva/src/modules/transitions.js'
 
 var translStore = {}
 

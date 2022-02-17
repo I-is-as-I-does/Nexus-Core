@@ -1,5 +1,5 @@
 /*! Nexus | (c) 2021-22 I-is-as-I-does | AGPLv3 license */
-import { defaultIO } from '../base/NxDefaults'
+import { defaultIO } from '../base/NxDefaults.js'
 
 export function getSnippet (src, style = null, scriptSrc = null, lang = null) {
   // @doc does NOT validate arguments;

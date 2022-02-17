@@ -1,5 +1,5 @@
 /*! Nexus | (c) 2021-22 I-is-as-I-does | AGPLv3 license */
-import { loadJson } from '@i-is-as-i-does/jack-js/src/modules/Web'
+import { loadJson } from '@i-is-as-i-does/jack-js/src/modules/Web.js'
 import { logErr } from '../logs/NxLog.js'
 import { getStoredData, registerData } from '../storg/NxMemory.js'
 import { validData } from '../validt/NxStamper.js'
@@ -12,15 +12,16 @@ export function getThreadsList (nxdata) {
   return list
 }
 
-export function loadSrc (url) {
+export function loadSrc (url, lax = false) {
   // @doc: src should not contain #id
   return loadJson(url)
-
     .then((nxdata) => {
-      nxdata = validData(nxdata)
+      nxdata = validData(nxdata, lax)
 
       if (nxdata) {
-        registerData(url, nxdata)
+        if(!lax){
+          registerData(url, nxdata)
+        }
         return nxdata
       }
       logErr('Invalid source', url)
@@ -37,31 +38,32 @@ export function loadSrc (url) {
     })
 }
 
-export function prcFileSrc (readerEvent, skipValidt = false) {
-  var nxdata = JSON.parse(readerEvent.target.result)
-  if (nxdata) {
-    if(skipValidt){
-      return nxdata
+export function getSrcDocData(jsonData, lax = false) {
+  var nxdata = null
+  try {
+    var nxdata = JSON.parse(jsonData)
+    if(nxdata){
+      nxdata = validData(nxdata, lax)
     }
-    nxdata = validData(nxdata)
-    if (nxdata) {
-      return nxdata
+    if(!nxdata){
+      throw new Error('Invalid Nexus data')
     }
-  }
-  return false
+} catch (err) {
+  logErr('Invalid source', err.message)
+}
+return nxdata
 }
 
-export function loadSrcFile (inputEvt, skipValidt = false) {
+export function loadSrcFile (inputEvt, lax = false) {
   if (inputEvt.target.files.length) {
     if (inputEvt.target.files[0].type === 'application/json') {
       return new Promise((resolve, reject) => {
         var reader = new FileReader()
         reader.onload = function (event) {
-          var nxdata = prcFileSrc(event, skipValidt)
+          var nxdata = getSrcDocData(event.target.result, lax)
           if (nxdata) {
             resolve(nxdata)
           } else {
-            logErr('Invalid source', inputEvt.target.files[0])
             reject(new Error(400))
           }
         }
@@ -75,7 +77,7 @@ export function loadSrcFile (inputEvt, skipValidt = false) {
   return Promise.reject(new Error(400))
 }
 
-export function getSrcData (url) {
+export function getSrcData (url, lax = false) {
   // @doc: url should not contain #id
   var nxdata = getStoredData(url)
   if (nxdata !== null) {
@@ -84,5 +86,5 @@ export function getSrcData (url) {
     }
     return Promise.resolve(nxdata)
   }
-  return loadSrc(url)
+  return loadSrc(url, lax)
 }

@@ -4,8 +4,8 @@ import { loadAppCss } from './NxStyle.js'
 import { logErr, setConsoleLog } from '../logs/NxLog.js'
 import { getRequest } from '../base/NxRequest.js'
 import { getQuery } from '../base/NxHost.js'
-import { getSrcData } from './NxSrc.js'
-import { defaultElmId } from './../base/NxDefaults.js'
+import { getSrcData, getSrcDocData } from './NxSrc.js'
+import { defaultElmId } from '../base/NxDefaults.js'
 import { eraseReaderSaves, clearReaderCache } from '../storg/NxMemory.js'
 
 export const defaultInitOptions = {
@@ -69,14 +69,17 @@ export function resolveTheme (request, fallbackCssUrl = null, forceStyle = null,
 }
 
 export function resolveData (request) {
+  if(request.srcdoc){
+    var nxdata = getSrcDocData(request.srcdoc, request.mode === 'editor')
+    if(nxdata){
+      return Promise.resolve(nxdata)
+    }
+  }
   if (request.url) {
-    return getSrcData(request.url).then(nxdata => {
-      return nxdata
-    })
+    return getSrcData(request.url)
   }
   return Promise.reject(new Error(0))
 }
-
 
 export function initAll (options = {}) {
   var seed = {}
