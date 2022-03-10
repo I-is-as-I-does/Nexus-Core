@@ -2,7 +2,7 @@
   "name": "@i-is-as-i-does/nexus-core",
   "private": false,
   "type":"module",
-  "version": "2.2.9",
+  "version": "2.2.10",
   "description": "Toolkit for Nexus related apps.",
   "main": "./index.js",
   "directories": {

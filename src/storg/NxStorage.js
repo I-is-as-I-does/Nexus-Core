@@ -54,6 +54,7 @@ export function storeItem(key, data, storage = 'session', instanceStore = null) 
   if (instStoreExists(instanceStore)) {
     instStores[instanceStore][key] = sdata
   }
+  if(storage){
   var store = getBrowserStore(storage)
   if (store) {
     var datasize = jsonSize(sdata, true, true)
@@ -70,11 +71,13 @@ export function storeItem(key, data, storage = 'session', instanceStore = null) 
     store.setItem('available', Math.ceil(avail))
   }
 }
+}
 
 export function getStoredItem(key, storage = 'session', instanceStore = null) {
   if (instStoreHasKey(instanceStore, key)) {
     return JSON.parse(instStores[instanceStore][key])
   }
+  if(storage){
   var store = getBrowserStore(storage)
   if (store) {
     var sdata = store.getItem(key)
@@ -85,6 +88,7 @@ export function getStoredItem(key, storage = 'session', instanceStore = null) {
       return JSON.parse(sdata)
     }
   }
+}
   return null
 }
 
@@ -92,10 +96,12 @@ export function removeItem(key, storage = 'session', instanceStore = null) {
   if (instStoreHasKey(instanceStore, key)) {
     delete instStores[instanceStore][key]
   }
+  if(storage){
   var store = getBrowserStore(storage)
   if (store) {
     store.removeItem(key)
   }
+}
 }
 
 export function clearInstanceStores(excludeStores = []) {

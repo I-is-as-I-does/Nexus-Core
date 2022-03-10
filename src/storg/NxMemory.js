@@ -39,11 +39,11 @@ export function isThreadContentUnseen(src, timestamp) {
 }
 
 export function clearData(url) {
-  removeItem(url, 'session', 'data')
+  removeItem(url, null, 'data')
 }
 
 export function registerData(url, nxdata) {
-  storeItem(url, nxdata, 'session', 'data')
+  storeItem(url, nxdata, null, 'data')
 }
 
 export function registerLinkedMaps(src, map) {
@@ -55,7 +55,7 @@ export function getStoredLinkedMaps(src) {
 }
 
 export function getStoredData(url) {
-  return getStoredItem(url, 'session', 'data')
+  return getStoredItem(url, null, 'data')
 }
 
 export function registerOembedResponse(givenUrl, response) {
