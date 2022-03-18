@@ -47,11 +47,11 @@ export function registerData(url, nxdata) {
 }
 
 export function registerLinkedMaps(src, map) {
-  storeItem(src + ':linked', map, 'session', 'linked')
+  storeItem(src + ':linked', map, null, 'linked')
 }
 
 export function getStoredLinkedMaps(src) {
-  return getStoredItem(src + ':linked', 'session', 'linked')
+  return getStoredItem(src + ':linked', null, 'linked')
 }
 
 export function getStoredData(url) {
