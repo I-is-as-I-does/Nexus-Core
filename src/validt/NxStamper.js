@@ -172,9 +172,25 @@ export function fallbackContent(lax = false){
     return null
 }
 
+export function formatTimestamp(timestamp){
+  if(!timestamp){
+    return fallbacks.timestamp;
+  }
+  if(timestamp.match(timestampPattern+'$')){
+      return timestamp
+  }
+    try {
+      timestamp = new Date(timestamp).toISOString().split('T')[0]
+    } catch (e){
+      logErr('Invalid timestamp', timestamp)
+      timestamp = fallbacks.timestamp
+    }
+  return timestamp
+}
+
 export function validTimestamp(timestamp, lax = false){
   if(isValidTimestamp (timestamp, false)){
-    return timestamp
+    return formatTimestamp(timestamp)
   }
   if(lax){
     return fallbacks.timestamp

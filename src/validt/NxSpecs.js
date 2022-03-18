@@ -61,6 +61,6 @@ export const supportedBaseMedia = [
 ]
 export const supportedMediaTypes = supportedBaseMedia.concat(supportedOembedMedia)
 export const timestampPattern =
-    '^[0-9]{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[1-2][0-9]|3[0-1]))?((T|\s)(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]))?)?$'
+    '^[0-9]{4}((-|\s|\.|\/)(0[1-9]|1[0-2])((-|\s|\.|\/)(0[1-9]|[1-2][0-9]|3[0-1]))?)?'
 export const idPattern = '^[a-zA-Z0-9-]{3,36}$'
 export const urlPattern = '^https?:\/\/.*'
